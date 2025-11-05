@@ -17,11 +17,14 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background: var(--bg-gradient);
+    background: linear-gradient(45deg, #F3E8FF 0%, #E8D4F8 25%, #DCC5F0 50%, #E8D4F8 75%, #F3E8FF 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
     color: var(--text-color);
     line-height: 1.6;
     overflow-x: hidden;
     min-height: 100vh;
+    position: relative;
 }
 
 /* Контейнер */
@@ -427,4 +430,310 @@ body::-webkit-scrollbar-thumb {
 
 body::-webkit-scrollbar-thumb:hover {
     background: var(--dark-purple);
+}
+
+/* ==================== НОВЫЕ ФУНКЦИИ ==================== */
+
+/* Контейнер для фоновых частиц */
+#particles-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: radial-gradient(circle, rgba(232, 180, 240, 0.8) 0%, rgba(157, 132, 183, 0.4) 100%);
+    border-radius: 50%;
+    pointer-events: none;
+    box-shadow: 0 0 10px rgba(232, 180, 240, 0.6);
+}
+
+/* Счетчик дней вместе */
+.counter-section {
+    text-align: center;
+    padding: 40px 20px;
+    margin: 30px 0;
+    background: linear-gradient(135deg, rgba(232, 180, 240, 0.4) 0%, rgba(200, 184, 219, 0.4) 100%);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(157, 132, 183, 0.3);
+}
+
+.counter-display {
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.counter-number {
+    font-size: 4rem;
+    font-weight: bold;
+    color: var(--dark-purple);
+    text-shadow: 2px 2px 8px rgba(157, 132, 183, 0.4);
+    animation: counterPulse 2s ease-in-out infinite;
+}
+
+.counter-label {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+.counter-subtext {
+    margin-top: 15px;
+    font-size: 1rem;
+    color: var(--text-color);
+    opacity: 0.8;
+}
+
+/* Scratch Card */
+.scratch-section {
+    text-align: center;
+    padding: 40px 20px;
+    margin: 50px 0;
+    background: linear-gradient(135deg, rgba(200, 184, 219, 0.3) 0%, rgba(232, 180, 240, 0.3) 100%);
+    border-radius: 20px;
+}
+
+.scratch-card-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    margin: 30px auto;
+    aspect-ratio: 4/3;
+}
+
+#scratch-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    border-radius: 15px;
+    z-index: 2;
+    touch-action: none;
+}
+
+.scratch-message {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #E8B4F0 0%, #C8B8DB 100%);
+    border-radius: 15px;
+    padding: 30px;
+    z-index: 1;
+    box-shadow: 0 5px 20px rgba(157, 132, 183, 0.3);
+}
+
+.scratch-message p {
+    font-size: 1.3rem;
+    line-height: 1.8;
+    color: white;
+    text-align: center;
+    font-weight: 600;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    margin: 10px 0;
+}
+
+/* Коллаж в форме сердца */
+.collage-section {
+    text-align: center;
+    padding: 40px 20px;
+    margin: 50px 0;
+    background: linear-gradient(135deg, rgba(232, 180, 240, 0.3) 0%, rgba(200, 184, 219, 0.3) 100%);
+    border-radius: 20px;
+}
+
+.heart-collage {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    height: 400px;
+    margin: 30px auto;
+}
+
+.collage-photo {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(157, 132, 183, 0.4);
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.collage-photo:hover {
+    transform: scale(1.2);
+    z-index: 10;
+}
+
+.collage-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Фотогалерея с увеличением */
+.photo-frame {
+    cursor: pointer;
+    position: relative;
+}
+
+.lightbox {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.lightbox.active {
+    display: flex;
+}
+
+.lightbox-content {
+    position: relative;
+    max-width: 95%;
+    max-height: 95%;
+    animation: zoomIn 0.3s ease;
+}
+
+.lightbox-content img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 10px;
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 3rem;
+    color: white;
+    cursor: pointer;
+    z-index: 10001;
+    background: rgba(157, 132, 183, 0.5);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.lightbox-close:hover {
+    background: rgba(157, 132, 183, 0.8);
+    transform: rotate(90deg);
+}
+
+/* Дополнительные анимации */
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@keyframes counterPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes zoomIn {
+    from {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes particleFloat {
+    0% {
+        transform: translateY(0) translateX(0);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100vh) translateX(var(--drift));
+        opacity: 0;
+    }
+}
+
+/* Адаптивность для новых секций */
+@media (max-width: 480px) {
+    .counter-number {
+        font-size: 3rem;
+    }
+
+    .counter-label {
+        font-size: 1.2rem;
+    }
+
+    .scratch-card-wrapper {
+        max-width: 320px;
+    }
+
+    .scratch-message p {
+        font-size: 1.1rem;
+    }
+
+    .heart-collage {
+        max-width: 300px;
+        height: 300px;
+    }
+
+    .collage-photo {
+        width: 45px;
+        height: 45px;
+    }
+
+    .lightbox-close {
+        top: 10px;
+        right: 10px;
+        font-size: 2rem;
+        width: 40px;
+        height: 40px;
+    }
 }

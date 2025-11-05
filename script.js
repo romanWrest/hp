@@ -11,6 +11,13 @@ document.addEventListener('DOMContentLoaded', function() {
     initCandles();
     initHearts();
     addScrollAnimations();
+
+    // Новые функции
+    initParticles();
+    initDaysCounter();
+    initScratchCard();
+    initHeartCollage();
+    initLightbox();
 });
 
 // ==================== МУЗЫКА ====================
@@ -283,3 +290,331 @@ document.addEventListener('click', function autoStart() {
     document.removeEventListener('click', autoStart);
 }, { once: true });
 */
+
+// ==================== НОВЫЕ ФУНКЦИИ ====================
+
+// ==================== ФОНОВЫЕ ЧАСТИЦЫ ====================
+
+function initParticles() {
+    const particlesContainer = document.getElementById('particles-container');
+    const particleCount = 30; // Количество частиц
+
+    function createParticle() {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+
+        // Случайная начальная позиция
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.bottom = '-10px';
+
+        // Случайный размер
+        const size = 3 + Math.random() * 5;
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+
+        // Случайное горизонтальное смещение
+        const drift = (Math.random() - 0.5) * 100;
+        particle.style.setProperty('--drift', drift + 'px');
+
+        // Случайная длительность анимации
+        const duration = 10 + Math.random() * 15;
+        particle.style.animation = `particleFloat ${duration}s linear infinite`;
+
+        // Случайная задержка
+        particle.style.animationDelay = Math.random() * 10 + 's';
+
+        particlesContainer.appendChild(particle);
+    }
+
+    // Создаем частицы
+    for (let i = 0; i < particleCount; i++) {
+        createParticle();
+    }
+}
+
+// ==================== СЧЕТЧИК ДНЕЙ ВМЕСТЕ ====================
+
+function initDaysCounter() {
+    const startDate = new Date('2025-09-02'); // 2 сентября 2025
+    const counterElement = document.getElementById('days-counter');
+
+    function updateCounter() {
+        const now = new Date();
+        const diffTime = Math.abs(now - startDate);
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+        // Анимированное обновление счетчика
+        animateCounter(counterElement, 0, diffDays, 2000);
+    }
+
+    function animateCounter(element, start, end, duration) {
+        const startTime = performance.now();
+
+        function update(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+
+            // Easing функция для плавности
+            const easeOutQuad = progress => progress * (2 - progress);
+            const current = Math.floor(start + (end - start) * easeOutQuad(progress));
+
+            element.textContent = current;
+
+            if (progress < 1) {
+                requestAnimationFrame(update);
+            }
+        }
+
+        requestAnimationFrame(update);
+    }
+
+    updateCounter();
+}
+
+// ==================== SCRATCH CARD ====================
+
+function initScratchCard() {
+    const canvas = document.getElementById('scratch-canvas');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    const resetButton = document.getElementById('reset-scratch');
+
+    let isDrawing = false;
+    let lastX = 0;
+    let lastY = 0;
+
+    // Устанавливаем размер canvas
+    function resizeCanvas() {
+        const wrapper = canvas.parentElement;
+        canvas.width = wrapper.offsetWidth;
+        canvas.height = wrapper.offsetHeight;
+        drawScratchSurface();
+    }
+
+    // Рисуем поверхность для стирания
+    function drawScratchSurface() {
+        ctx.fillStyle = '#9D84B7';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Добавляем текст "Сотри меня!"
+        ctx.fillStyle = 'white';
+        ctx.font = 'bold 24px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('Сотри меня! 👆', canvas.width / 2, canvas.height / 2);
+
+        // Добавляем узор
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+        for (let i = 0; i < 20; i++) {
+            ctx.fillRect(
+                Math.random() * canvas.width,
+                Math.random() * canvas.height,
+                10,
+                10
+            );
+        }
+    }
+
+    // Функция стирания
+    function scratch(x, y) {
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.beginPath();
+        ctx.arc(x, y, 30, 0, 2 * Math.PI);
+        ctx.fill();
+    }
+
+    // Обработчики событий для мыши
+    canvas.addEventListener('mousedown', (e) => {
+        isDrawing = true;
+        const rect = canvas.getBoundingClientRect();
+        lastX = e.clientX - rect.left;
+        lastY = e.clientY - rect.top;
+        scratch(lastX, lastY);
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+        if (!isDrawing) return;
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        // Рисуем линию между точками для плавности
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.lineWidth = 60;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+
+        lastX = x;
+        lastY = y;
+    });
+
+    canvas.addEventListener('mouseup', () => {
+        isDrawing = false;
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+        isDrawing = false;
+    });
+
+    // Обработчики событий для тач-устройств
+    canvas.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        isDrawing = true;
+        const rect = canvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        lastX = touch.clientX - rect.left;
+        lastY = touch.clientY - rect.top;
+        scratch(lastX, lastY);
+    });
+
+    canvas.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        if (!isDrawing) return;
+        const rect = canvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        const x = touch.clientX - rect.left;
+        const y = touch.clientY - rect.top;
+
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.lineWidth = 60;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+
+        lastX = x;
+        lastY = y;
+    });
+
+    canvas.addEventListener('touchend', () => {
+        isDrawing = false;
+    });
+
+    // Кнопка сброса
+    resetButton.addEventListener('click', () => {
+        resizeCanvas();
+    });
+
+    // Инициализация
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+}
+
+// ==================== КОЛЛАЖ В ФОРМЕ СЕРДЦА ====================
+
+function initHeartCollage() {
+    const collageContainer = document.getElementById('heart-collage');
+    if (!collageContainer) return;
+
+    // Координаты точек в форме сердца (в процентах)
+    const heartPoints = [
+        // Верхняя левая дуга
+        { x: 30, y: 25 }, { x: 20, y: 20 }, { x: 15, y: 30 }, { x: 15, y: 40 },
+        // Левая сторона
+        { x: 20, y: 50 }, { x: 25, y: 60 }, { x: 35, y: 70 }, { x: 45, y: 80 },
+        // Нижняя точка
+        { x: 50, y: 85 },
+        // Правая сторона
+        { x: 55, y: 80 }, { x: 65, y: 70 }, { x: 75, y: 60 }, { x: 80, y: 50 },
+        // Верхняя правая дуга
+        { x: 85, y: 40 }, { x: 85, y: 30 }, { x: 80, y: 20 }, { x: 70, y: 25 },
+        // Центральные точки
+        { x: 50, y: 30 }, { x: 40, y: 40 }, { x: 60, y: 40 },
+        { x: 35, y: 50 }, { x: 50, y: 50 }, { x: 65, y: 50 },
+        { x: 40, y: 60 }, { x: 50, y: 65 }, { x: 60, y: 60 }
+    ];
+
+    // Создаем мини-фото для каждой точки
+    heartPoints.forEach((point, index) => {
+        const photoDiv = document.createElement('div');
+        photoDiv.className = 'collage-photo';
+        photoDiv.style.left = point.x + '%';
+        photoDiv.style.top = point.y + '%';
+
+        // Используем градиенты как плейсхолдеры
+        const gradients = [
+            'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+            'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)',
+            'linear-gradient(135deg, #d299c2 0%, #fef9d7 100%)',
+            'linear-gradient(135deg, #ce9ffc 0%, #7367f0 100%)',
+            'linear-gradient(135deg, #90f7ec 0%, #32ccbc 100%)',
+            'linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)'
+        ];
+
+        photoDiv.style.background = gradients[index % gradients.length];
+
+        // Добавляем номер как текст
+        photoDiv.innerHTML = `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size:12px;">${(index % 7) + 1}</div>`;
+
+        // Анимация появления
+        photoDiv.style.opacity = '0';
+        photoDiv.style.transform = 'scale(0)';
+        setTimeout(() => {
+            photoDiv.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            photoDiv.style.opacity = '1';
+            photoDiv.style.transform = 'scale(1)';
+        }, index * 50);
+
+        collageContainer.appendChild(photoDiv);
+    });
+}
+
+// ==================== ФОТОГАЛЕРЕЯ С УВЕЛИЧЕНИЕМ ====================
+
+function initLightbox() {
+    // Создаем элемент lightbox
+    const lightbox = document.createElement('div');
+    lightbox.className = 'lightbox';
+    lightbox.innerHTML = `
+        <div class="lightbox-close">×</div>
+        <div class="lightbox-content">
+            <img src="" alt="Увеличенное фото">
+        </div>
+    `;
+    document.body.appendChild(lightbox);
+
+    const lightboxImg = lightbox.querySelector('img');
+    const closeBtn = lightbox.querySelector('.lightbox-close');
+
+    // Добавляем обработчики на все фото
+    const photoFrames = document.querySelectorAll('.photo-frame');
+
+    photoFrames.forEach(frame => {
+        frame.addEventListener('click', function() {
+            const img = this.querySelector('img');
+            if (img && img.src) {
+                lightboxImg.src = img.src;
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden'; // Отключаем прокрутку
+            }
+        });
+    });
+
+    // Закрытие по клику на кнопку
+    closeBtn.addEventListener('click', () => {
+        lightbox.classList.remove('active');
+        document.body.style.overflow = ''; // Включаем прокрутку
+    });
+
+    // Закрытие по клику на фон
+    lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    });
+
+    // Закрытие по нажатию Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    });
+}

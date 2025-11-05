@@ -10,6 +10,9 @@
     <!-- Контейнер для летающих сердечек -->
     <div id="hearts-container"></div>
 
+    <!-- Контейнер для фоновых частиц -->
+    <div id="particles-container"></div>
+
     <!-- Главный контейнер -->
     <div class="container">
 
@@ -18,6 +21,16 @@
             <h1 class="main-title">С Днём Рождения, Настена!</h1>
             <p class="subtitle">Самой прекрасной девушке на свете 💜</p>
         </header>
+
+        <!-- Счетчик дней вместе -->
+        <section class="counter-section">
+            <h2 class="section-title">Мы вместе уже</h2>
+            <div class="counter-display">
+                <div class="counter-number" id="days-counter">0</div>
+                <div class="counter-label">дней</div>
+            </div>
+            <p class="counter-subtext">С 2 сентября 2025 года 💕</p>
+        </section>
 
         <!-- Секция 1: Фото -->
         <section class="photo-section">
@@ -118,7 +131,7 @@
         <section class="photo-section">
             <div class="photo-frame">
                 <div class="placeholder-image" style="background: linear-gradient(135deg, #ce9ffc 0%, #7367f0 100%);">
-                    <span class="photo-number">5</span>
+                    <img src="images/6.jpg" alt="Фото 1" style="width: 100%; border-radius: 15px;">
                 </div>
             </div>
         </section>
@@ -160,6 +173,27 @@
                 <div class="placeholder-image" style="background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);">
                     <span class="photo-number">7</span>
                 </div>
+            </div>
+        </section>
+
+        <!-- Scratch Card секция -->
+        <section class="scratch-section">
+            <h2 class="section-title">Сотри, чтобы увидеть секретное послание! 🎁</h2>
+            <div class="scratch-card-wrapper">
+                <canvas id="scratch-canvas"></canvas>
+                <div class="scratch-message" id="scratch-message">
+                    <p>Ты самый важный человек в моей жизни! 💜</p>
+                    <p>С тобой каждый день - это праздник! 🎉</p>
+                </div>
+            </div>
+            <button class="interactive-btn" id="reset-scratch">Сбросить 🔄</button>
+        </section>
+
+        <!-- Коллаж из мини-фото в форме сердца -->
+        <section class="collage-section">
+            <h2 class="section-title">Наши моменты 💕</h2>
+            <div class="heart-collage" id="heart-collage">
+                <!-- Мини-фото будут добавлены через JavaScript -->
             </div>
         </section>
 
