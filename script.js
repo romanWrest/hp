@@ -511,46 +511,59 @@ function initHeartCollage() {
     const collageContainer = document.getElementById('heart-collage');
     if (!collageContainer) return;
 
-    // Координаты точек в форме сердца (в процентах)
-    const heartPoints = [
+    // Координаты и фото для каждой точки вручную
+    // По краю сердца - 11.jpg, внутри - остальные фото
+    const heartPhotos = [
+        // ========== КРАЙ СЕРДЦА (контур) ==========
         // Верхняя левая дуга
-        { x: 30, y: 25 }, { x: 20, y: 20 }, { x: 15, y: 30 }, { x: 15, y: 40 },
+        { x: 30, y: 25, photo: 'collage/11.jpg' },
+        { x: 20, y: 20, photo: 'collage/11.jpg' },
+        { x: 15, y: 30, photo: 'collage/11.jpg' },
+        { x: 15, y: 40, photo: 'collage/11.jpg' },
+
         // Левая сторона
-        { x: 20, y: 50 }, { x: 25, y: 60 }, { x: 35, y: 70 }, { x: 45, y: 80 },
+        { x: 20, y: 50, photo: 'collage/11.jpg' },
+        { x: 25, y: 60, photo: 'collage/11.jpg' },
+        { x: 35, y: 70, photo: 'collage/11.jpg' },
+        { x: 45, y: 80, photo: 'collage/11.jpg' },
+
         // Нижняя точка
-        { x: 50, y: 85 },
+        { x: 50, y: 85, photo: 'collage/111.jpg' },
+
         // Правая сторона
-        { x: 55, y: 80 }, { x: 65, y: 70 }, { x: 75, y: 60 }, { x: 80, y: 50 },
+        { x: 55, y: 80, photo: 'collage/11.jpg' },
+        { x: 65, y: 70, photo: 'collage/11.jpg' },
+        { x: 75, y: 60, photo: 'collage/11.jpg' },
+        { x: 80, y: 50, photo: 'collage/11.jpg' },
+
         // Верхняя правая дуга
-        { x: 85, y: 40 }, { x: 85, y: 30 }, { x: 80, y: 20 }, { x: 70, y: 25 },
-        // Центральные точки
-        { x: 50, y: 30 }, { x: 40, y: 40 }, { x: 60, y: 40 },
-        { x: 35, y: 50 }, { x: 50, y: 50 }, { x: 65, y: 50 },
-        { x: 40, y: 60 }, { x: 50, y: 65 }, { x: 60, y: 60 }
+        { x: 85, y: 40, photo: 'collage/11.jpg' },
+        { x: 85, y: 30, photo: 'collage/11.jpg' },
+        { x: 80, y: 20, photo: 'collage/11.jpg' },
+        { x: 70, y: 25, photo: 'collage/11.jpg' },
+
+        // ========== ВНУТРИ СЕРДЦА ==========
+        // Центральные точки - здесь можешь менять фото
+        { x: 50, y: 30, photo: 'collage/1.JPG' },
+        { x: 40, y: 40, photo: 'collage/2.jpg' },
+        { x: 60, y: 40, photo: 'collage/3.jpg' },
+        { x: 35, y: 50, photo: 'collage/4.jpg' },
+        { x: 50, y: 50, photo: 'collage/5.JPG' },
+        { x: 65, y: 50, photo: 'collage/112.jpg' },
+        { x: 40, y: 60, photo: 'collage/7.JPG' },
+        { x: 50, y: 65, photo: 'collage/8.JPG' },
+        { x: 60, y: 60, photo: 'collage/9.JPG' }
     ];
 
     // Создаем мини-фото для каждой точки
-    heartPoints.forEach((point, index) => {
+    heartPhotos.forEach((item, index) => {
         const photoDiv = document.createElement('div');
         photoDiv.className = 'collage-photo';
-        photoDiv.style.left = point.x + '%';
-        photoDiv.style.top = point.y + '%';
+        photoDiv.style.left = item.x + '%';
+        photoDiv.style.top = item.y + '%';
 
-        // Используем градиенты как плейсхолдеры
-        const gradients = [
-            'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
-            'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)',
-            'linear-gradient(135deg, #d299c2 0%, #fef9d7 100%)',
-            'linear-gradient(135deg, #ce9ffc 0%, #7367f0 100%)',
-            'linear-gradient(135deg, #90f7ec 0%, #32ccbc 100%)',
-            'linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)'
-        ];
-
-        photoDiv.style.background = gradients[index % gradients.length];
-
-        // Добавляем номер как текст
-        photoDiv.innerHTML = `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size:12px;">${(index % 7) + 1}</div>`;
+        // Добавляем изображение
+        photoDiv.innerHTML = `<img src="${item.photo}" alt="Фото ${index + 1}" style="width:100%; height:100%; object-fit:cover;">`;
 
         // Анимация появления
         photoDiv.style.opacity = '0';
