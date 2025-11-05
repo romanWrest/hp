@@ -3,6 +3,7 @@ let audioContext;
 let oscillator;
 let gainNode;
 let isPlaying = false;
+let backgroundMusic = null; // Объект аудио для фоновой музыки
 
 // Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', function() {
@@ -42,66 +43,24 @@ function createAudioContext() {
 }
 
 function playMusic() {
-    if (!audioContext) return;
-
-    // Создаем простую мелодию "С днем рождения"
-    const melody = [
-        { note: 264, duration: 0.5 }, // До
-        { note: 264, duration: 0.5 }, // До
-        { note: 297, duration: 1 },   // Ре
-        { note: 264, duration: 1 },   // До
-        { note: 352, duration: 1 },   // Фа
-        { note: 330, duration: 2 },   // Ми
-
-        { note: 264, duration: 0.5 }, // До
-        { note: 264, duration: 0.5 }, // До
-        { note: 297, duration: 1 },   // Ре
-        { note: 264, duration: 1 },   // До
-        { note: 396, duration: 1 },   // Соль
-        { note: 352, duration: 2 },   // Фа
-    ];
-
-    let time = audioContext.currentTime;
-
-    function playMelody() {
-        if (!isPlaying) return;
-
-        melody.forEach(note => {
-            const osc = audioContext.createOscillator();
-            const noteGain = audioContext.createGain();
-
-            osc.type = 'sine';
-            osc.frequency.value = note.note;
-
-            noteGain.gain.value = 0;
-            noteGain.gain.linearRampToValueAtTime(0.1, time + 0.1);
-            noteGain.gain.linearRampToValueAtTime(0, time + note.duration);
-
-            osc.connect(noteGain);
-            noteGain.connect(gainNode);
-
-            osc.start(time);
-            osc.stop(time + note.duration);
-
-            time += note.duration;
-        });
-
-        // Повторяем мелодию с паузой
-        setTimeout(() => {
-            if (isPlaying) {
-                time = audioContext.currentTime + 1; // Пауза 1 секунда
-                playMelody();
-            }
-        }, (time - audioContext.currentTime + 1) * 1000);
+    // Создаем аудио объект только один раз
+    if (!backgroundMusic) {
+        backgroundMusic = new Audio('birthday.mp3');
+        backgroundMusic.loop = true;
+        backgroundMusic.volume = 0.3;
     }
 
-    playMelody();
+    // Воспроизводим музыку
+    backgroundMusic.play().catch(error => {
+        console.log('Ошибка воспроизведения:', error);
+    });
 }
 
 function stopMusic() {
-    if (audioContext) {
-        // Останавливаем музыку
-        isPlaying = false;
+    // Останавливаем и перематываем музыку
+    if (backgroundMusic) {
+        backgroundMusic.pause();
+        backgroundMusic.currentTime = 0;
     }
 }
 
